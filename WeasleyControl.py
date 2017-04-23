@@ -31,7 +31,8 @@ servoMapping = {
   'cole': 3,
   'dad': 1,
   'mom': 2,
-  'grant': 0
+  'grant': 0,
+  'all':99
 }
 
 positionMapping = {
@@ -60,6 +61,17 @@ def setAngle(servo, angle):
   #print("Servo: ", servo, "Angle: ", angle, "pwmValue: ", pwmValue, angleRatio, rounded)
   pwm.setPWM(servo, 0, pwmValue)
 
+def setTargetAndPosition(target, position):
+  if target >= 0 and target < 4 and position >= 0 and position <= 360:
+    pwm.setPWMFreq(60)                        # Set frequency to 60 Hz
+    target = target * 4;
+
+    # Change speed of continuous servo on channel O
+    setAngle(target, position)
+    time.sleep(1)
+  else:
+    print "Bad data for servo position: ", target, position
+
 pwm.setPWMFreq(60)                        # Set frequency to 60 Hz
 while (True):
     pwm.setAllPWM(0,0);
@@ -85,16 +97,16 @@ while (True):
     if lineBits[1] in positionMapping:
       position = positionMapping[lineBits[1]];
     else: 
-      # Nope not in the list - must be a specific values
-      position = int(lineBits[1]);
+      try:
+        # Nope not in the list - must be a specific values
+        position = int(lineBits[1]);
+      except:
+        print "Received bad position.", lineBits[1]
 
-    if target >= 0 and target < 4 and position >= 0 and position <= 360:
-      pwm.setPWMFreq(60)                        # Set frequency to 60 Hz
-
-      target = target * 4;
-
-      # Change speed of continuous servo on channel O
-      setAngle(target, position)
-      time.sleep(1)
+    if target != 99:
+      setTargetAndPosition(target, position);
     else:
-      print "Bad data for servo position: ", target, position
+      setTargetAndPosition(0, position);
+      setTargetAndPosition(1, position);
+      setTargetAndPosition(2, position);
+      setTargetAndPosition(3, position);

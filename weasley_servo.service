@@ -5,6 +5,7 @@ After=network-online.target
 [Service]
 ExecStart=/usr/bin/python /home/pi/weasley/WeasleyControl.py
 StandardOutput=syslog
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
