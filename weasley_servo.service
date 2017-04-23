@@ -1,0 +1,11 @@
+[Unit]
+Description=Weasley Servo Service
+After=network-online.target
+ 
+[Service]
+ExecStart=/usr/bin/python /home/pi/weasley/WeasleyControl.py
+StandardOutput=syslog
+
+[Install]
+WantedBy=multi-user.target
+Alias=weasley_servo.service
