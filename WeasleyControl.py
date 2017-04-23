@@ -36,10 +36,10 @@ servoMapping = {
 
 positionMapping = {
   'home': 0,
-  'work': 30,
-  'school': 40,
-  'friends': 100,
-  'travel': 150,
+  'work': 350,
+  'school': 240,
+  'friends': 180,
+  'travel': 90,
 }
 
 def setServoPulse(channel, pulse):
@@ -65,7 +65,7 @@ while (True):
     pwm.setAllPWM(0,0);
     pwm.setPWMFreq(60)
     lineBits = [];
-    with open('servofifo.pipe') as fp:
+    with open('/home/pi/weasley/servofifo.pipe') as fp:
       line = fp.readline();
       lineBits = line.split();
       fp.close();
