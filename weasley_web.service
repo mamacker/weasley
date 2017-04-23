@@ -1,0 +1,12 @@
+[Unit]
+Description=Weasley Web Service
+After=network-online.target
+ 
+[Service]
+ExecStart=/usr/bin/nodejs /home/pi/weasley/index.js
+StandardOutput=syslog
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+Alias=weasley_web.service
