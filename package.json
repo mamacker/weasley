@@ -1,0 +1,23 @@
+{
+  "name": "weasley",
+  "version": "1.0.0",
+  "description": "The weasly clock implementation",
+  "main": "index.js",
+  "dependencies": {
+    "net-ping": "^1.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mamacker/weasley.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mamacker/weasley/issues"
+  },
+  "homepage": "https://github.com/mamacker/weasley#readme"
+}
