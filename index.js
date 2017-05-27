@@ -2,6 +2,7 @@ var ping = require('./node_modules/node-net-ping/');
 var https = require('https');
 var fs = require('fs');
 var storedData = {};
+var targets = ["192.168.1.164", "192.168.1.96"];
 setInterval(() => {
   https.get('https://theamackers.com/weasley/all', (res) => {
     res.setEncoding('utf8');
@@ -29,42 +30,57 @@ setInterval(() => {
         console.error(e.message);
       }
     });
+    res.on('error', (err) => {
+      console.log(err, err.stack);
+    });
+  }).on('error', (err) => {
+    console.log(err, err.stack);
   });
 }, 3000);
 
-function checkForPhones() {
-  var mattSession = ping.createSession({retries:5});
-  mattSession.on('error', function(eror) {
-    console.trace(error.toString());
-  });
-  var mattTarget = "192.168.1.164"
-  mattSession.pingHost (mattTarget, function (error, target) {
+function handlePhone(target) {
+  try {
+    switch(target) {
+      case targets[0]:
+        https.get('https://theamackers.com/weasley/set?which=dad&where=home', (res) => { });
+        console.log (target + ": Alive");
+        break;
+      case targets[1]:
+        https.get('https://theamackers.com/weasley/set?which=mom&where=home', (res) => { });
+        console.log (target + ": Alive");
+        break;
+    }
+  } catch(ex) { console.log(ex); }
+}
+
+function pingPhone(target, session) {
+  session.pingHost (target, function (error, target) {
     if (error) {
       console.log (target + ": ", error);// + error.toString ());
     }
     else {
-      https.get('https://theamackers.com/weasley/set?which=dad&where=home', (res) => {
-      });
-      console.log (target + ": Alive");
+      handlePhone(target);
     }
   });
+}
 
-  setTimeout(() => {
-    var roxanneSession = ping.createSession({retries:5});
-    var roxanneTarget = "192.168.1.96"
-    roxanneSession.pingHost (roxanneTarget, function (error, target) {
-      if (error) {
-        console.log (target + ": ", error);// + error.toString ());
-      } else {
-        https.get('https://theamackers.com/weasley/set?which=mom&where=home', (res) => {
-        });
-        console.log (target + ": Alive");
-      }
-    });
-  },5000);
+function checkForPhones() {
+  var session = ping.createSession({retries:5});
+  session.on('error', function(eror) {
+    console.trace(error.toString());
+  });
+
+  for (var i = 0; i < targets.length; i++) {
+    pingPhone(targets[i], session);
+  }
 }
 // USe the phone's reserved IP addresses to discover if Matt or Roxanne are home.
 setInterval(() => {
   checkForPhones();
 }, 30000);
 checkForPhones();
+
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ' + err);
+    console.log(err.stack);
+});
