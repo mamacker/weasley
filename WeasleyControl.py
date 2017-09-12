@@ -39,7 +39,7 @@ positionMapping = {
   'home': 0,
   'work': 350,
   'school': 240,
-  'friends': 180,
+  'friends': 293,
   'travel': 90,
 }
 
