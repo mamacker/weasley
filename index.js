@@ -1,7 +1,9 @@
 var ping = require('net-ping');
 var https = require('https');
 var fs = require('fs');
+var player = require('play-sound')(opts = {})
 var storedData = {};
+var isDst = require('dst');
 var targets = ["192.168.1.164", "192.168.1.96"];
 setInterval(() => {
   var handle = https.get('https://theamackers.com/weasley/all', (res) => {
@@ -84,6 +86,34 @@ setInterval(() => {
   checkForPhones();
 }, 30000);
 checkForPhones();
+
+function playGongOnce() {
+  player.play("/home/pi/weasley/gong.mp3", {timeout:3000});
+}
+
+function playGong(times) {
+  for (var i = 0; i < times; i++) {
+    setTimeout(playGongOnce, i * 3000);
+  }
+}
+
+setInterval(() => {
+  var now = new Date();
+  var hours = now.getHours() - 7;
+  if (isDst()) {
+    hours -= 1;
+  }
+  console.log("Hours: ", hours);
+
+  if (hours > 7 && hours < 22) {
+    if (now.getMinutes() == 0 && now.getSeconds() <= 10) {
+      if (hours > 12) {
+        hours = hours - 12;
+      }
+      playGong(hours);
+    }
+  }
+}, 10000);
 
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ' + err);

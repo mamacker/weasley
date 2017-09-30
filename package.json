@@ -4,6 +4,7 @@
   "description": "The weasly clock implementation",
   "main": "index.js",
   "dependencies": {
+    "dst": "0.0.4",
     "net-ping": "file:node-net-ping",
     "play-sound": "^1.1.1"
   },
