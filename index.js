@@ -84,7 +84,7 @@ function checkForPhones() {
 // USe the phone's reserved IP addresses to discover if Matt or Roxanne are home.
 setInterval(() => {
   checkForPhones();
-}, 30000);
+}, 10000);
 checkForPhones();
 
 function playGongOnce() {
