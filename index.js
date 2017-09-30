@@ -1,4 +1,4 @@
-var ping = require('./node_modules/node-net-ping/');
+var ping = require('net-ping');
 var https = require('https');
 var fs = require('fs');
 var storedData = {};
