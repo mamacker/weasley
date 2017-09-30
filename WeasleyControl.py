@@ -41,6 +41,7 @@ positionMapping = {
   'school': 240,
   'friends': 293,
   'travel': 90,
+  'exercise': 48,
 }
 
 def setServoPulse(channel, pulse):

@@ -4,13 +4,14 @@ var fs = require('fs');
 var storedData = {};
 var targets = ["192.168.1.164", "192.168.1.96"];
 setInterval(() => {
-  https.get('https://theamackers.com/weasley/all', (res) => {
+  var handle = https.get('https://theamackers.com/weasley/all', (res) => {
     res.setEncoding('utf8');
     let rawData = '';
     res.on('data', (chunk) => { rawData += chunk; });
     res.on('end', () => {
       try {
         const parsedData = JSON.parse(rawData);
+        console.log("Data from weasley service: ", parsedData);
         var writeCt = 0;
         for (var value in parsedData) {
           if (parsedData[value] != storedData[value]) {
@@ -35,6 +36,10 @@ setInterval(() => {
     });
   }).on('error', (err) => {
     console.log(err, err.stack);
+  });
+
+  handle.on('error', function(err) {
+    console.log("Error trying to connect: ", err);
   });
 }, 3000);
 
