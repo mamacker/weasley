@@ -119,6 +119,9 @@ setInterval(() => {
       }
       playGong(hours);
     }
+    if (now.getMinutes() == 30 && now.getSeconds() <= 10) {
+      playGong(1);
+    }
   }
 }, 10000);
 
