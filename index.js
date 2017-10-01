@@ -87,7 +87,8 @@ setInterval(() => {
 }, 10000);
 checkForPhones();
 
-function playGongOnce() {
+function playGongOnce(timeout) {
+  if (!timeout) { timeout = 3000; }
   player.play("/home/pi/weasley/gong.mp3", {timeout:3000});
 }
 
@@ -120,7 +121,7 @@ setInterval(() => {
       playGong(hours);
     }
     if (now.getMinutes() == 30 && now.getSeconds() <= 10) {
-      playGong(1);
+      playGongOnce(10000);
     }
   }
 }, 10000);
