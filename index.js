@@ -87,15 +87,18 @@ setInterval(() => {
 }, 10000);
 checkForPhones();
 
+var gDuration = 4000;
 function playGongOnce(timeout) {
-  if (!timeout) { timeout = 3000; }
-  player.play("/home/pi/weasley/gong.mp3", {timeout:3000});
+  if (!timeout) { timeout = gDuration; }
+  player.play("/home/pi/weasley/gong.mp3", {timeout:timeout});
 }
 
-function playGong(times) {
-  for (var i = 0; i < times; i++) {
-    setTimeout(playGongOnce, i * 3000);
-  }
+function playFile(filename) {
+  player.play(filename);
+}
+
+function playGongForHour(hour) {
+  playFile("/home/pi/weasley/gongs"+hour + ".mp3");
 }
 
 setInterval(() => {
@@ -118,10 +121,10 @@ setInterval(() => {
       if (hours > 12) {
         hours = hours - 12;
       }
-      playGong(hours);
+      playGongForHour(hours);
     }
     if (now.getMinutes() == 30 && now.getSeconds() <= 10) {
-      playGongOnce(10000);
+      playFile("/home/pi/weasley/halfgong.mp3");
     }
   }
 }, 10000);
