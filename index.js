@@ -100,9 +100,16 @@ function playGong(times) {
 setInterval(() => {
   var now = new Date();
   var hours = now.getHours() - 7;
+
   if (isDst()) {
     hours -= 1;
   }
+
+  // Might have wrapped.
+  if (hours < 0) {
+    hours += 24;
+  }
+
   console.log("Hours: ", hours);
 
   if (hours > 7 && hours < 22) {
