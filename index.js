@@ -103,9 +103,9 @@ function playGongForHour(hour) {
 
 setInterval(() => {
   var now = new Date();
-  var hours = now.getHours() - 7;
+  var hours = now.getHours() - 8;
 
-  if (isDst()) {
+  if (isDst(now) && false) {
     hours -= 1;
   }
 
