@@ -2,9 +2,40 @@ var ping = require('net-ping');
 var https = require('https');
 var fs = require('fs');
 var player = require('play-sound')(opts = {})
+const FauxMo = require('fauxmojs');
+const os = require('os');
+const dns = require('dns');
+
+let ipAddress = '';
+dns.lookup(os.hostname()+".local", (e,a,f) => { 
+  console.log("IP address: ", a, "Errors: ", e); ipAddress = a; 
+  let fauxMo = new FauxMo({
+    ipAddress: ipAddress,
+    devices: [{
+        name: 'weasley',
+        port: 11000,
+        handler: (action) => {
+          console.log('Weasley:', action);
+          https.get('https://theamackers.com/weasley/set?which=dad&where=work', (res) => { });
+          https.get('https://theamackers.com/weasley/set?which=mom&where=exercise', (res) => { });
+          https.get('https://theamackers.com/weasley/set?which=cole&where=friends', (res) => { });
+          https.get('https://theamackers.com/weasley/set?which=grant&where=school', (res) => { });
+
+          setTimeout(() => {
+            https.get('https://theamackers.com/weasley/set?which=dad&where=home', (res) => { });
+            https.get('https://theamackers.com/weasley/set?which=mom&where=home', (res) => { });
+            https.get('https://theamackers.com/weasley/set?which=cole&where=home', (res) => { });
+            https.get('https://theamackers.com/weasley/set?which=grant&where=home', (res) => { });
+          }, 10000);
+        }
+      }
+    ]
+  });
+});
+
 var storedData = {};
 var isDst = require('dst');
-var targets = ["192.168.1.164", "192.168.1.96"];
+var targets = ["192.168.1.50", "192.168.1.96"];
 setInterval(() => {
   var handle = https.get('https://theamackers.com/weasley/all', (res) => {
     res.setEncoding('utf8');
@@ -103,7 +134,7 @@ function playGongForHour(hour) {
 
 setInterval(() => {
   var now = new Date();
-  var hours = now.getHours() - 8;
+  var hours = now.getHours();
 
   if (isDst(now) && false) {
     hours -= 1;
