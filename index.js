@@ -1,4 +1,4 @@
-var ping = require('net-ping');
+var ping = require('ping');
 var https = require('https');
 var fs = require('fs');
 var player = require('play-sound')(opts = {})
@@ -35,7 +35,7 @@ dns.lookup(os.hostname()+".local", (e,a,f) => {
 
 var storedData = {};
 var isDst = require('dst');
-var targets = ["192.168.1.50", "192.168.1.96"];
+var targets = ["192.168.1.102", "192.168.1.151"];
 setInterval(() => {
   var handle = https.get('https://theamackers.com/weasley/all', (res) => {
     res.setEncoding('utf8');
@@ -91,25 +91,19 @@ function handlePhone(target) {
   } catch(ex) { console.log(ex); }
 }
 
-function pingPhone(target, session) {
-  session.pingHost (target, function (error, target) {
-    if (error) {
-      console.log (target + ": ", error);// + error.toString ());
-    }
-    else {
-      handlePhone(target);
-    }
+async function pingPhone(target) {
+  let res = await ping.promise.probe(target, {
+	  timeout: 10
   });
+  console.log("Ping res:", res);
+  if (res.alive) {
+  	handlePhone(target);
+  }
 }
 
 function checkForPhones() {
-  var session = ping.createSession({retries:5});
-  session.on('error', function(eror) {
-    console.trace(error.toString());
-  });
-
   for (var i = 0; i < targets.length; i++) {
-    pingPhone(targets[i], session);
+    pingPhone(targets[i]);
   }
 }
 // USe the phone's reserved IP addresses to discover if Matt or Roxanne are home.

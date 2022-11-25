@@ -1,23 +1,15 @@
-#!/usr/bin/python
-
-from Adafruit_PWM_Servo_Driver import PWM
+#!/usr/bin/python3
+from adafruit_servokit import ServoKit
+kit = ServoKit(channels=16)
 import time
 import sys
 import fcntl
 import os
+import math
 
 # ===========================================================================
 # Example Code
 # ===========================================================================
-
-# Initialise the PWM device using the default address
-pwm = PWM(0x40)
-# Note if you'd like more debug output you can instead run:
-#pwm = PWM(0x40, debug=True)
-
-servoMin = 150  # Min pulse length out of 4096
-servoMax = 600  # Max pulse length out of 4096
-totalRange = servoMax - servoMin
 
 servoMapping = {
   0: 0,
@@ -37,46 +29,79 @@ servoMapping = {
 
 positionMapping = {
   'home': 0,
-  'work': 350,
-  'school': 240,
-  'friends': 293,
+  'work': 315,
+  'school': 230,
+  'friends': 270,
   'travel': 90,
-  'exercise': 48,
+  'exercise': 40,
 }
 
-def setServoPulse(channel, pulse):
-  pulseLength = 1000000                   # 1,000,000 us per second
-  pulseLength /= 60                       # 60 Hz
-  print "%d us per period" % pulseLength
-  pulseLength /= 4096                     # 12 bits of resolution
-  print "%d us per bit" % pulseLength
-  pulse *= 1000
-  pulse /= pulseLength
-  pwm.setPWM(channel, 0, pulse)
+rangeMapping = [
+  { #grant
+      'home': 0,
+      'work': 315,
+      'school': 230,
+      'friends': 270,
+      'travel': 90,
+      'exercise': 40,
+      'min': 600,
+      'max': 2650
+  },
+  { #dad
+      'home': 0,
+      'work': 220,
+      'school': 230,
+      'friends': 270,
+      'travel': 90,
+      'exercise': 40,
+      'min': 600,
+      'max': 4096
+  },
+  { #mom
+      'home': 0,
+      'work': 315,
+      'school': 230,
+      'friends': 270,
+      'travel': 90,
+      'exercise': 40,
+      'min': 600,
+      'max': 2650
+  },
+  { #cole
+      'home': 0,
+      'work': 315,
+      'school': 230,
+      'friends': 270,
+      'travel': 90,
+      'exercise': 40,
+      'min': 600,
+      'max': 2650
+  }
+]
+
+MAX_POSITION=360
+servoMin = 600  # Min pulse length out of 4096
+servoMax = 2650  # Max pulse length out of 4096
 
 def setAngle(servo, angle):
-  angleRatio = float(float(angle)/360.00)
-  rounded = int(round(angleRatio * totalRange));
-
-  pwmValue = rounded + servoMin
-  #print("Servo: ", servo, "Angle: ", angle, "pwmValue: ", pwmValue, angleRatio, rounded)
-  pwm.setPWM(servo, 0, pwmValue)
+  print("Setting angle for :", servo, angle);
+  kit.servo[servo].set_pulse_width_range(servoMin, servoMax);
+  kit.servo[servo].set_pulse_width_range(rangeMapping[math.floor(servo/4)]["min"], rangeMapping[math.floor(servo/4)]["max"]);
+  kit.servo[servo].actuation_range = MAX_POSITION 
+  kit.servo[servo].angle = angle
 
 def setTargetAndPosition(target, position):
-  if target >= 0 and target < 4 and position >= 0 and position <= 360:
-    pwm.setPWMFreq(60)                        # Set frequency to 60 Hz
+  print("Target", target)
+  print("Postion", position)
+  if target >= 0 and target < 4 and position >= 0 and position <= MAX_POSITION:
     target = target * 4;
-
     # Change speed of continuous servo on channel O
     setAngle(target, position)
     time.sleep(1)
   else:
-    print "Bad data for servo position: ", target, position
+    print("Bad data for servo position: ", target, position)
 
-pwm.setPWMFreq(60)                        # Set frequency to 60 Hz
 while (True):
-    pwm.setAllPWM(0,0);
-    pwm.setPWMFreq(60)
     lineBits = [];
     with open('/home/pi/weasley/servofifo.pipe') as fp:
       line = fp.readline();
@@ -92,17 +117,18 @@ while (True):
     if lineBits[0] in servoMapping:
       target = servoMapping[lineBits[0]];
     else:
-      print "Target not mapped: ", lineBits[0], servoMapping.keys()
+      print("Target not mapped: ", lineBits[0], servoMapping.keys())
 
     # Check to see if this is in the known positions.
+    print("Position:", target, lineBits[1]);
     if lineBits[1] in positionMapping:
-      position = positionMapping[lineBits[1]];
+      position = rangeMapping[target][lineBits[1]];
     else: 
       try:
         # Nope not in the list - must be a specific values
         position = int(lineBits[1]);
       except:
-        print "Received bad position.", lineBits[1]
+        print("Received bad position.", lineBits[1])
 
     if target != 99:
       setTargetAndPosition(target, position);

@@ -6,10 +6,9 @@
   "dependencies": {
     "dst": "0.0.4",
     "fauxmojs": "^1.0.3",
-    "net-ping": "file:node-net-ping",
-    "play-sound": "^1.1.1"
+    "ping": "^0.4.2",
+    "play-sound": "^1.1.5"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
