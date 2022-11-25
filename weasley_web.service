@@ -3,7 +3,7 @@ Description=Weasley Web Service
 After=network-online.target
  
 [Service]
-ExecStart=/usr/bin/nodejs /home/pi/weasley/index.js
+ExecStart=/usr/bin/node /home/pi/weasley/index.js
 StandardOutput=syslog
 Restart=always
 

@@ -101,12 +101,28 @@ def setTargetAndPosition(target, position):
   else:
     print("Bad data for servo position: ", target, position)
 
+setTargetAndPosition(0, 0);
+setTargetAndPosition(1, 0);
+setTargetAndPosition(2, 0);
+setTargetAndPosition(3, 0);
+
+line = ""
+lastLine = line
 while (True):
+
     lineBits = [];
     with open('/home/pi/weasley/servofifo.pipe') as fp:
       line = fp.readline();
       lineBits = line.split();
       fp.close();
+
+    if (line != lastLine):
+        lastLine = line
+    else:
+        time.sleep(1)
+        continue
+
+    print("Line bits:", lineBits);
 
     target = -1
     position = -1
@@ -137,3 +153,4 @@ while (True):
       setTargetAndPosition(1, position);
       setTargetAndPosition(2, position);
       setTargetAndPosition(3, position);
+
